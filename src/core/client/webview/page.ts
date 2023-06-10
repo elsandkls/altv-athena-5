@@ -94,13 +94,6 @@ export interface IPage {
              * @type {boolean}
              */
             setIsMenuOpenToTrue?: boolean;
-
-            /**
-             * Force the WebView open. Disregard all rules.
-             *
-             * @type {boolean}
-             */
-            forceOpen?: boolean;
         };
         onClose?: {
             /**
@@ -214,6 +207,8 @@ export class Page {
      *
      */
     async open(): Promise<boolean> {
+        console.log(this);
+
         if (this.info.keybind && this.info.keybind.useSameKeyToClose) {
             if (AthenaClient.webview.isPageOpen(this.info.name)) {
                 this.close(true);
@@ -221,15 +216,15 @@ export class Page {
             }
         }
 
-        if (AthenaClient.webview.isAnyMenuOpen() && !this.info.options.onOpen.forceOpen) {
+        if (AthenaClient.webview.isAnyMenuOpen()) {
             return false;
         }
 
-        if (alt.isConsoleOpen() && !this.info.options.onOpen.forceOpen) {
+        if (alt.isConsoleOpen()) {
             return false;
         }
 
-        if (alt.isMenuOpen() && !this.info.options.onOpen.forceOpen) {
+        if (alt.isMenuOpen()) {
             return false;
         }
 

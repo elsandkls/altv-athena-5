@@ -23,7 +23,6 @@ export function open(onReady: Function, onClose: Function) {
                     setIsMenuOpenToTrue: true,
                     hideOverlays: true,
                     hideHud: true,
-                    forceOpen: true,
                 },
                 onClose: {
                     enableControls: true,

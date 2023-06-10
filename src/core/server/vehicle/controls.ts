@@ -41,8 +41,6 @@ export async function toggleEngine(vehicle: alt.Vehicle): Promise<boolean> {
         return false;
     }
 
-    const nextState = !vehicle.engineOn;
-
     if (vehicle.driver) {
         vehicle.driver.emit(SYSTEM_EVENTS.VEHICLE_ENGINE, !vehicle.engineOn);
     } else {
@@ -50,7 +48,6 @@ export async function toggleEngine(vehicle: alt.Vehicle): Promise<boolean> {
     }
 
     await updateLastUsed(vehicle);
-    await alt.Utils.waitFor(() => vehicle.engineOn === nextState);
 
     return vehicle.engineOn;
 }

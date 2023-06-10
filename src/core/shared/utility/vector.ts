@@ -1,5 +1,4 @@
 import * as alt from 'alt-shared';
-export { DirectionVector } from './directionVector';
 
 /**
  * Get the distance between two positions.
@@ -312,3 +311,21 @@ export function getClosestOfType<T = { pos: alt.IVector3 }>(
 
     return lastClosest;
 }
+
+export default {
+    distance,
+    distance2d,
+    fwdX,
+    fwdY,
+    fwdZ,
+    getClosestEntity,
+    getClosestOfType,
+    getClosestTypes,
+    getClosestVector,
+    getClosestVectorByPos,
+    getForwardVector,
+    getVectorInFrontOfPlayer,
+    isBetweenVectors,
+    lerp,
+    vectorLerp,
+};

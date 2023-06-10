@@ -17,8 +17,6 @@ let menu: MenuInfo;
 let optionIndex: number = 0;
 let document: alt.RmlDocument;
 let pauseControl = false;
-let nextDebounce = Date.now() + 0;
-let everyTick: number;
 
 const InternalFunctions = {
     init(info: MenuInfo) {
@@ -87,18 +85,12 @@ const InternalFunctions = {
         }
 
         if (option.type === 'Range') {
-            element.innerRML = `&lt; ${option.min} / ${option.value.toFixed(2)} / ${option.max} &gt;`;
+            element.innerRML = `&lt; ${option.value}/${option.max} &gt;`;
             return;
         }
 
         if (option.type === 'Selection') {
-            let value = option.options[option.value];
-
-            if (typeof value === 'string') {
-                value = value.replaceAll('&', '&amp;');
-            }
-
-            element.innerRML = `&lt; ${value} &gt;`;
+            element.innerRML = `&lt; ${option.options[option.value].replaceAll('&', '&amp;')} &gt;`;
             return;
         }
 
@@ -124,15 +116,11 @@ const InternalFunctions = {
         native.disableFrontendThisFrame();
         native.setFrontendActive(false);
 
-        if (menu.callbackOnClose) {
-            menu.callbackOnClose();
-        }
-
         menu = undefined;
         AthenaClient.systems.sound.frontend('CANCEL', 'HUD_FREEMODE_SOUNDSET');
 
         alt.Player.local.isMenuOpen = false;
-        alt.clearEveryTick(everyTick);
+        alt.off('keyup', InternalFunctions.handleKeyUp);
     },
     /**
      * Called when pressing enter.
@@ -142,6 +130,8 @@ const InternalFunctions = {
 
         // Ignore hitting enter for Range / Selection type unless enter is used for updating.
         if ((option.type === 'Range' || option.type === 'Selection') && !option.onlyUpdateOnEnter) {
+            console.log('parsing...');
+
             pauseControl = true;
             const specifiedValue = await AthenaClient.rmlui.input.create(
                 {
@@ -204,18 +194,6 @@ const InternalFunctions = {
                 option.callback(option.value);
                 InternalFunctions.updateValue();
                 return;
-            case 'Input':
-                pauseControls();
-                await alt.Utils.wait(250);
-
-                const result = await AthenaClient.rmlui.input.create({ placeholder: option.placeholder }, true);
-
-                if (option.callback) {
-                    option.callback(result);
-                }
-
-                unpauseControls();
-                return;
         }
     },
     /**
@@ -266,7 +244,7 @@ const InternalFunctions = {
      */
     left() {
         const option = menu.options[optionIndex];
-        if (option.type === 'Invoke' || option.type === 'Toggle' || option.type === 'Input') {
+        if (option.type === 'Invoke' || option.type === 'Toggle') {
             return;
         }
 
@@ -292,18 +270,6 @@ const InternalFunctions = {
             option.value -= increment;
         }
 
-        if (option.type === 'Range') {
-            if (!option.onlyUpdateOnEnter && option.callback) {
-                option.callback(option.value);
-            }
-        }
-
-        if (option.type === 'Selection') {
-            if (!option.onlyUpdateOnEnter && option.callback) {
-                option.callback(option.options[option.value]);
-            }
-        }
-
         InternalFunctions.updateValue();
 
         if (alt.debug) {
@@ -316,7 +282,7 @@ const InternalFunctions = {
      */
     right() {
         const option = menu.options[optionIndex];
-        if (option.type === 'Invoke' || option.type === 'Toggle' || option.type === 'Input') {
+        if (option.type === 'Invoke' || option.type === 'Toggle') {
             return;
         }
 
@@ -342,25 +308,19 @@ const InternalFunctions = {
             option.value += increment;
         }
 
-        if (option.type === 'Range') {
-            if (!option.onlyUpdateOnEnter && option.callback) {
-                option.callback(option.value);
-            }
-        }
-
-        if (option.type === 'Selection') {
-            if (!option.onlyUpdateOnEnter && option.callback) {
-                option.callback(option.options[option.value]);
-            }
-        }
-
         InternalFunctions.updateValue();
 
         if (alt.debug) {
             alt.log(`NAV_RIGHT -> ${option.value}`);
         }
     },
-    handleKeyHeld() {
+    /**
+     * Invokes key press functions.
+     *
+     * @param {number} keycode
+     * @return {void}
+     */
+    handleKeyUp(keycode: number) {
         if (alt.isMenuOpen()) {
             return;
         }
@@ -369,28 +329,11 @@ const InternalFunctions = {
             return;
         }
 
-        Object.keys(FUNCTION_BINDS).forEach((keycode) => {
-            const key = parseInt(keycode);
-            if (isNaN(key)) {
-                return;
-            }
+        if (typeof FUNCTION_BINDS[keycode] !== 'function') {
+            return;
+        }
 
-            if (!alt.isKeyDown(key)) {
-                return;
-            }
-
-            if (Date.now() < nextDebounce) {
-                return;
-            }
-
-            let debounceTime = 150;
-            if (key === KEYS.RIGHT_KEY || key === KEYS.LEFT_KEY) {
-                debounceTime = 75;
-            }
-
-            nextDebounce = Date.now() + debounceTime;
-            FUNCTION_BINDS[keycode]();
-        });
+        FUNCTION_BINDS[keycode]();
     },
 };
 
@@ -422,9 +365,8 @@ export function create(info: MenuInfo): void {
         document.show();
     }
 
-    pauseControl = false;
     alt.Player.local.isMenuOpen = true;
-    everyTick = alt.everyTick(InternalFunctions.handleKeyHeld);
+    alt.on('keyup', InternalFunctions.handleKeyUp);
     InternalFunctions.init(info);
 }
 /**
@@ -435,14 +377,6 @@ export function create(info: MenuInfo): void {
 export async function close(): Promise<void> {
     await InternalFunctions.close();
     await alt.Utils.wait(100);
-}
-
-export function pauseControls() {
-    pauseControl = true;
-}
-
-export function unpauseControls() {
-    pauseControl = false;
 }
 
 /**

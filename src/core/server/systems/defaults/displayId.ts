@@ -5,7 +5,7 @@ import * as alt from 'alt-server';
 /**
  * THIS IS A DEFAULT SYSTEM.
  * IF YOU WANT TO DISABLE IT, MAKE A PLUGIN AND DISABLE IT THROUGH:
- * `Athena.systems.defaults.x.disable()`
+ * `Athena.systems.default.x.disable()`
  *
  * DO NOT APPEND ANY ADDITIONAL DATA TO THIS SYSTEM.
  * COPY THE CODE AND REMAKE IT AS A PLUGIN IF YOU WANT TO MAKE CHANGES.
@@ -38,7 +38,7 @@ const Internal = {
  *
  * #### Example
  * ```ts
- * Athena.systems.defaults.displayId.disable();
+ * Athena.systems.default.displayId.disable();
  * ```
  *
  *
@@ -58,7 +58,7 @@ export function disable() {
  * #### Example
  * ```ts
  * // Place in the very center of the screen. I'm sure everyone would love it.
- * Athena.systems.defaults.displayId.setLocation(0.5, 0.5);
+ * Athena.systems.default.displayId.setLocation(0.5, 0.5);
  * ```
  *
  *

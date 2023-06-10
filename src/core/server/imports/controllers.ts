@@ -1,8 +1,6 @@
 import '../controllers/admin';
 import '../controllers/blip';
 import '../controllers/doors';
-import '../controllers/dynamicDoors/player';
-import '../controllers/dynamicDoors/system';
 import '../controllers/interaction';
 import '../controllers/marker';
 import '../controllers/object';

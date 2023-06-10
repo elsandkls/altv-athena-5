@@ -90,7 +90,6 @@ export async function add(item: StoredItem, pos: alt.IVector3, player: alt.Playe
 
     if (typeof player !== 'undefined') {
         Athena.player.events.trigger('drop-item', player, item);
-        Athena.systems.inventory.events.invoke(player, 'onDrop', item.dbName, item.slot);
     }
 
     return document._id as string;

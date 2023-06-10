@@ -1,7 +1,6 @@
 import * as alt from 'alt-server';
 import * as Athena from '@AthenaServer/api';
 import * as vehicle from './vehicle';
-import { Character } from '@AthenaShared/interfaces/character';
 
 /**
  * Return all players currently online and logged into a character.
@@ -19,12 +18,6 @@ export function online(): alt.Player[] {
     });
 }
 
-/**
- * Return all players with weapons out.
- *
- * @export
- * @return {alt.Player[]}
- */
 export function onlineWithWeapons(): alt.Player[] {
     return [...alt.Player.all].filter((p) => {
         if (!p.valid) {
@@ -43,7 +36,6 @@ export function onlineWithWeapons(): alt.Player[] {
         return true;
     });
 }
-
 /**
  * Creates an array of players who are closest to a position.
  * Array is automatically sorted into ascending order.
@@ -197,15 +189,4 @@ export function drivingSpecificModel(model: string | number): alt.Player[] {
  */
 export function inVehicle(vehicle: alt.Vehicle): alt.Player[] {
     return alt.Player.all.filter((x) => x.vehicle && x.vehicle.id === vehicle.id);
-}
-
-/**
- * Get all online players as characters.
- *
- * @export
- * @template T
- * @return {*}
- */
-export function asCharacters<T = Character>() {
-    return Athena.document.character.getAllOnline<T>();
 }

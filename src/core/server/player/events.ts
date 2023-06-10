@@ -237,9 +237,12 @@ export function on(
  *
  * @template T
  * @param {'player-disconnected'} eventName
- * @param {((document: Character | T) => void)} callback
+ * @param {((player: alt.Player, id: number, document: Character | T) => void)} callback
  */
-export function on<T>(eventName: 'player-disconnected', callback: (player: undefined, document: Character | T) => void);
+export function on<T>(
+    eventName: 'player-disconnected',
+    callback: (player: alt.Player, id: number, document: Character | T) => void,
+);
 
 /**
  * Triggers when a player unequips a weapon.
@@ -281,18 +284,6 @@ export function on<T>(eventName: 'player-account-created', callback: (player: al
  * @param {(player: alt.Player) => void} callback
  */
 export function on<T>(eventName: 'player-character-created', callback: (player: alt.Player) => void);
-
-/**
- * Called when a player has set their account data.
- *
- * Called immediately after authentication.
- *
- * @export
- * @template T
- * @param {'set-account-data'} eventName
- * @param {(player: alt.Player) => void} callback
- */
-export function on<T>(eventName: 'set-account-data', callback: (player: alt.Player) => void);
 
 /**
  * Trigger a callback specific to Athena Player Events.

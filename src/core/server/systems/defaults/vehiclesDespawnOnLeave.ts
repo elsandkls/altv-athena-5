@@ -6,7 +6,7 @@ import { Character } from '@AthenaShared/interfaces/character';
 /**
  * THIS IS A DEFAULT SYSTEM.
  * IF YOU WANT TO DISABLE IT, MAKE A PLUGIN AND DISABLE IT THROUGH:
- * `Athena.systems.defaults.x.disable()`
+ * `Athena.systems.default.x.disable()`
  *
  * DO NOT APPEND ANY ADDITIONAL DATA TO THIS SYSTEM.
  * COPY THE CODE AND REMAKE IT AS A PLUGIN IF YOU WANT TO MAKE CHANGES.
@@ -25,12 +25,8 @@ const Internal = {
         Athena.player.events.on('player-disconnected', Internal.processPlayer);
         alt.log(`~lc~Default System: ~g~${SYSTEM_NAME}`);
     },
-    async processPlayer(player: alt.Player, document: Character) {
+    async processPlayer(player: alt.Player, id: number, document: Character) {
         let removedVehicles = 0;
-
-        if (typeof document === 'undefined') {
-            return;
-        }
 
         const owner = document._id.toString();
 
@@ -41,10 +37,6 @@ const Internal = {
             }
 
             if (vehData.owner !== owner) {
-                continue;
-            }
-
-            if (vehData.doNotDespawn) {
                 continue;
             }
 
@@ -72,7 +64,7 @@ const Internal = {
  *
  * #### Example
  * ```ts
- * Athena.systems.defaults.vehiclesDespawnOnLeave.disable();
+ * Athena.systems.default.vehiclesDespawnOnLeave.disable();
  * ```
  *
  *

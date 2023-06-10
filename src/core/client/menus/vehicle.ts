@@ -115,9 +115,7 @@ export function open(vehicle: alt.Vehicle) {
         name: isLocked ? 'Unlock' : 'Lock',
         color: isLocked ? 'green' : 'red',
         icon: isLocked ? 'icon-lock-open' : 'icon-lock',
-        callback() {
-            alt.emitServer(VEHICLE_EVENTS.SET_LOCK, vehicle);
-        },
+        emitServer: VEHICLE_EVENTS.SET_LOCK,
     });
 
     // Not Pushing & Vehicle is Currently Unlocked
